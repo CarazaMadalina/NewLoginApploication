@@ -1,6 +1,8 @@
 package com.example.newloghinapplication;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,17 +11,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
-    Button loginButton;
-    Button cancelButton;
-    EditText username;
-    EditText password;
-    TextView attempts;
-    TextView forgot_password;
-    TextView do_not_have_an_account;
-    TextView or_button;
-    TextView sign_in_button;
-    TextView text;
+public class MainActivity extends Activity {
+    Button loginButton, cancelButton;
+    EditText username, password;
+    TextView attempts, forgot_password, do_not_have_an_account, or_button, sign_in_button, text;
+    int count = 3;
 
 
     @Override
@@ -42,13 +38,37 @@ public class MainActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                validateCredentials(username.getText().toString(), password.getText().toString());
+            }
+
+            private void validateCredentials(String username, String password) {
                 Log.i("MyApplication", "This is a magic log message!");
                 Toast.makeText(getApplicationContext(), "It's magic!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
 
+                if (username.equals("admin") && password.equals("1234")) {
+                    Toast.makeText(getApplicationContext(), "Redirecting...", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Wrong Credentials", Toast.LENGTH_SHORT).show();
+                    text.setVisibility(View.VISIBLE);
+                    text.setBackgroundColor(Color.parseColor("#3F51B5"));
 
+                    count--;
+                    text.setText(Integer.toString(count));
+
+                    if (count == 0) {
+                        loginButton.setEnabled(false);
+                    }
+                }
             }
         });
 
-
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 }
